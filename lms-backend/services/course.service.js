@@ -7,7 +7,7 @@ exports.getAllCourses = async () => {
 
 exports.getCourseById = async (id) => {
   const numericId = parseInt(id);
-  if (!numericId) throw new Error("Invalid course ID");
+  if (isNaN(numericId)) throw new Error("Invalid course ID");
 
   return await prisma.course.findUnique({ where: { id: numericId } });
 };
@@ -18,7 +18,7 @@ exports.createCourse = async (data) => {
 
 exports.updateCourse = async (id, data) => {
   const numericId = parseInt(id);
-  if (!numericId) throw new Error("Invalid course ID");
+  if (isNaN(numericId)) throw new Error("Invalid course ID");
 
   return await prisma.course.update({
     where: { id: numericId },
@@ -28,7 +28,7 @@ exports.updateCourse = async (id, data) => {
 
 exports.deleteCourse = async (id) => {
   const numericId = parseInt(id);
-  if (!numericId) throw new Error("Invalid course ID");
+  if (isNaN(numericId)) throw new Error("Invalid course ID");
 
   return await prisma.course.delete({ where: { id: numericId } });
 };
