@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 exports.getAllCourses = async () => {
@@ -6,17 +6,29 @@ exports.getAllCourses = async () => {
 };
 
 exports.getCourseById = async (id) => {
-  return await prisma.course.findUnique({ where: { id } });
+  const numericId = parseInt(id);
+  if (!numericId) throw new Error("Invalid course ID");
+
+  return await prisma.course.findUnique({ where: { id: numericId } });
 };
 
-exports.createCourse = async ({ title, description }) => {
-  return await prisma.course.create({ data: { title, description } });
+exports.createCourse = async (data) => {
+  return await prisma.course.create({ data });
 };
 
 exports.updateCourse = async (id, data) => {
-  return await prisma.course.update({ where: { id }, data });
+  const numericId = parseInt(id);
+  if (!numericId) throw new Error("Invalid course ID");
+
+  return await prisma.course.update({
+    where: { id: numericId },
+    data,
+  });
 };
 
 exports.deleteCourse = async (id) => {
-  return await prisma.course.delete({ where: { id } });
+  const numericId = parseInt(id);
+  if (!numericId) throw new Error("Invalid course ID");
+
+  return await prisma.course.delete({ where: { id: numericId } });
 };
