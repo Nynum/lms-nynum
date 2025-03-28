@@ -1,13 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userController = require('../controllers/user.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const userController = require("../controllers/user.controller");
+const { authenticate, authorize } = require("../middlewares/auth.middleware");
 
-router.use(authMiddleware, roleMiddleware('admin'));
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserById);
-router.put('/:id/role', userController.updateUserRole);
-router.delete('/:id', userController.deleteUser);
+// ตัวอย่างเส้นทางสำหรับจัดการผู้ใช้
+router.get("/", authenticate, authorize("admin"), userController.getAllUsers);
+router.get("/:id", authenticate, authorize("admin"), userController.getUserById);
+router.put("/:id", authenticate, authorize("admin"), userController.updateUser);
+router.delete("/:id", authenticate, authorize("admin"), userController.deleteUser);
 
 module.exports = router;
