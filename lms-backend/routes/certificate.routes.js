@@ -1,11 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const certificateController = require('../controllers/certificate.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const certificateController = require("../controllers/certificate.controller");
+const { authenticate, authorize } = require("../middlewares/auth.middleware");
 
-router.post('/:courseId', authMiddleware, roleMiddleware('student'), certificateController.issueCertificate);
-router.get('/my', authMiddleware, roleMiddleware('student'), certificateController.getMyCertificates);
-router.get('/verify/:code', certificateController.verifyCertificate);
+// 🔐 ใช้กับนักเรียนเท่านั้น
+router.post("/:courseId", authenticate, authorize("student"), certificateController.issueCertificate);
+router.get("/my", authenticate, authorize("student"), certificateController.getMyCertificates);
+
+// ✅ เพิ่ม route POST /api/certificates (ไม่ต้องใส่ courseId ใน URL)
+router.post("/", authenticate, authorize("student"), certificateController.issueCertificateFromBody);
+
+// ✅ สำหรับยืนยันใบรับรอง
+router.get("/verify/:code", certificateController.verifyCertificate);
 
 module.exports = router;
