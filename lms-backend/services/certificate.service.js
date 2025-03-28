@@ -1,30 +1,27 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
+const { nanoid } = require("nanoid");
 const prisma = new PrismaClient();
-const { customAlphabet } = require('nanoid');
-const nanoid = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
-exports.issue = async (userId, courseId) => {
-  const existing = await prisma.certificate.findUnique({
-    where: { userId_courseId: { userId, courseId } }
-  });
-  if (existing) return existing;
-
-  const code = nanoid();
+exports.generateCertificate = async ({ studentName, courseTitle, issuedDate, downloadUrl, courseId }) => {
+  const certificateId = nanoid(10);
   return await prisma.certificate.create({
-    data: { userId, courseId, code }
+    data: {
+      id: certificateId,
+      studentName,
+      courseTitle,
+      issuedDate,
+      downloadUrl,
+      courseId,
+    },
   });
 };
 
-exports.getByUser = async (userId) => {
-  return await prisma.certificate.findMany({
-    where: { userId },
-    include: { course: true }
-  });
-};
-
-exports.verify = async (code) => {
+exports.getCertificateById = async (id) => {
   return await prisma.certificate.findUnique({
-    where: { code },
-    include: { user: true, course: true }
+    where: { id },
   });
+};
+
+exports.getAllCertificates = async () => {
+  return await prisma.certificate.findMany();
 };
