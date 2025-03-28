@@ -1,5 +1,3 @@
-// 📁 backend/services/course.service.js
-
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -8,15 +6,17 @@ exports.getAllCourses = async () => {
 };
 
 exports.getCourseById = async (id) => {
-  if (!id) throw new Error("ID is required");
+  return await prisma.course.findUnique({ where: { id } });
+};
 
-  const course = await prisma.course.findUnique({
-    where: { id: Number(id) },
-    include: {
-      lessons: true,
-      quizzes: true,
-    },
-  });
+exports.createCourse = async ({ title, description }) => {
+  return await prisma.course.create({ data: { title, description } });
+};
 
-  return course;
+exports.updateCourse = async (id, data) => {
+  return await prisma.course.update({ where: { id }, data });
+};
+
+exports.deleteCourse = async (id) => {
+  return await prisma.course.delete({ where: { id } });
 };
