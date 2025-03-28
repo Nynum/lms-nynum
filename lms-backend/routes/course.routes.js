@@ -1,13 +1,11 @@
+// 📁 backend/routes/course.routes.js
+
 const express = require('express');
 const router = express.Router();
 const courseController = require('../controllers/course.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const { authenticate } = require('../middlewares/auth.middleware');
 
-router.get('/', courseController.getAllCourses);
-router.get('/:id', courseController.getCourseById);
-router.post('/', authMiddleware, roleMiddleware('admin'), courseController.createCourse);
-router.put('/:id', authMiddleware, roleMiddleware('admin'), courseController.updateCourse);
-router.delete('/:id', authMiddleware, roleMiddleware('admin'), courseController.deleteCourse);
+router.get('/', authenticate, courseController.getAllCourses);
+router.get('/:id', authenticate, courseController.getCourseById);
 
 module.exports = router;

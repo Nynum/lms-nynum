@@ -1,27 +1,26 @@
+// 📁 backend/controllers/course.controller.js
+
 const courseService = require('../services/course.service');
 
 exports.getAllCourses = async (req, res) => {
-  const courses = await courseService.getAllCourses();
-  res.json(courses);
+  try {
+    const courses = await courseService.getAllCourses();
+    res.json(courses);
+  } catch (err) {
+    console.error('Error in getAllCourses:', err);
+    res.status(500).json({ error: 'Failed to fetch courses' });
+  }
 };
 
 exports.getCourseById = async (req, res) => {
-  const course = await courseService.getCourseById(parseInt(req.params.id));
-  if (!course) return res.status(404).json({ error: 'Course not found' });
-  res.json(course);
-};
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'Missing course ID' });
 
-exports.createCourse = async (req, res) => {
-  const course = await courseService.createCourse(req.body);
-  res.status(201).json(course);
-};
-
-exports.updateCourse = async (req, res) => {
-  const updated = await courseService.updateCourse(parseInt(req.params.id), req.body);
-  res.json(updated);
-};
-
-exports.deleteCourse = async (req, res) => {
-  await courseService.deleteCourse(parseInt(req.params.id));
-  res.json({ message: 'Course deleted' });
+    const course = await courseService.getCourseById(id);
+    res.json(course);
+  } catch (err) {
+    console.error('Error in getCourseById:', err);
+    res.status(500).json({ error: 'Failed to fetch course' });
+  }
 };
