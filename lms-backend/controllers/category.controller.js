@@ -1,25 +1,17 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const categoryService = require('../services/category.service');
 
 exports.createCategory = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const category = await prisma.category.create({
-      data: { name },
-    });
-    res.status(201).json(category);
-  } catch (error) {
-    console.error("Error creating category:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+  const category = await categoryService.create(req.body.name);
+  res.status(201).json(category);
 };
 
 exports.getAllCategories = async (req, res) => {
-  try {
-    const categories = await prisma.category.findMany();
-    res.json(categories);
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+  const categories = await categoryService.getAll();
+  res.json(categories);
+};
+
+exports.getCoursesByCategory = async (req, res) => {
+  const categoryId = parseInt(req.params.id);
+  const courses = await categoryService.getCoursesByCategory(categoryId);
+  res.json(courses);
 };

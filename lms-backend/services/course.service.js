@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.getAllCourses = async () => {
@@ -6,29 +6,17 @@ exports.getAllCourses = async () => {
 };
 
 exports.getCourseById = async (id) => {
-  const numericId = parseInt(id);
-  if (isNaN(numericId)) throw new Error("Invalid course ID");
-
-  return await prisma.course.findUnique({ where: { id: numericId } });
+  return await prisma.course.findUnique({ where: { id } });
 };
 
-exports.createCourse = async (data) => {
-  return await prisma.course.create({ data });
+exports.createCourse = async ({ title, description }) => {
+  return await prisma.course.create({ data: { title, description } });
 };
 
 exports.updateCourse = async (id, data) => {
-  const numericId = parseInt(id);
-  if (isNaN(numericId)) throw new Error("Invalid course ID");
-
-  return await prisma.course.update({
-    where: { id: numericId },
-    data,
-  });
+  return await prisma.course.update({ where: { id }, data });
 };
 
 exports.deleteCourse = async (id) => {
-  const numericId = parseInt(id);
-  if (isNaN(numericId)) throw new Error("Invalid course ID");
-
-  return await prisma.course.delete({ where: { id: numericId } });
+  return await prisma.course.delete({ where: { id } });
 };

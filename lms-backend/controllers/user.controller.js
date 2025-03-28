@@ -1,50 +1,26 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const userService = require('../services/user.service');
 
 exports.getAllUsers = async (req, res) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: "ไม่สามารถดึงข้อมูลผู้ใช้ได้", error: error.message });
-  }
+  const users = await userService.getAll();
+  res.json(users);
 };
 
 exports.getUserById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) },
-    });
-    if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้" });
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: "เกิดข้อผิดพลาด", error: error.message });
-  }
+  const id = parseInt(req.params.id);
+  const user = await userService.getById(id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user);
 };
 
-exports.updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, email } = req.body;
-    const updatedUser = await prisma.user.update({
-      where: { id: parseInt(id) },
-      data: { name, email },
-    });
-    res.json(updatedUser);
-  } catch (error) {
-    res.status(500).json({ message: "ไม่สามารถอัปเดตผู้ใช้ได้", error: error.message });
-  }
+exports.updateUserRole = async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { role } = req.body;
+  const updated = await userService.updateRole(id, role);
+  res.json(updated);
 };
 
 exports.deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await prisma.user.delete({
-      where: { id: parseInt(id) },
-    });
-    res.json({ message: "ลบผู้ใช้เรียบร้อยแล้ว" });
-  } catch (error) {
-    res.status(500).json({ message: "เกิดข้อผิดพลาดในการลบผู้ใช้", error: error.message });
-  }
+  const id = parseInt(req.params.id);
+  await userService.delete(id);
+  res.json({ message: 'User deleted' });
 };
